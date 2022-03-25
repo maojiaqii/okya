@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.top.okya.dao.VtUserInfoMapper">
+    <resultMap id="BaseResultMap" type="com.top.okya.pojo.VtUserInfo">
+        <result column="USER_CODE" jdbcType="VARCHAR" property="userCode"/>
+        <result column="USER_NAME" jdbcType="VARCHAR" property="userName"/>
+        <result column="USED" jdbcType="VARCHAR" property="used"/>
+        <result column="SET_YEAR" jdbcType="VARCHAR" property="setYear"/>
+        <result column="ROLE_CODE" jdbcType="VARCHAR" property="roleCode"/>
+        <result column="ROLE_NAME" jdbcType="VARCHAR" property="roleName"/>
+        <result column="CO_CODE" jdbcType="VARCHAR" property="coCode"/>
+        <result column="CO_NAME" jdbcType="VARCHAR" property="coName"/>
+    </resultMap>
+    <select id="findPage" parameterType="map"
+            resultMap="BaseResultMap">
+        select * from vt_user_info
+        <where>1=1
+            <if test="userName != null and userName != ''">
+                and USER_NAME = #{userName,jdbcType=VARCHAR}
+            </if>
+            <if test="roleCode != null and roleCode != ''">
+                and ROLE_CODE = #{roleCode,jdbcType=VARCHAR}
+            </if>
+            and SET_YEAR = #{setYear,jdbcType=VARCHAR}
+            <if test="sortProp != null and sortProp != ''">
+                order by ${sortProp} ${sortOrder}
+            </if>
+        </where>
+    </select>
+</mapper>

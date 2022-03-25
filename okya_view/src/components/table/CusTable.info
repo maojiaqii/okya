@@ -1,0 +1,49 @@
+使用方法：
+<CusTable ref="sd" permsEdit="base:user:edit" permsDelete="base:user:delete" permsExport="base:user:export"
+              :showOperation=true
+              :data="pageResult" :columns="columns"
+              @findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete">
+</CusTable>
+支持插槽方式个性化数据形式：
+例： <template v-slot:icon="slotProps">
+           <i :class="slotProps.colData"></i>
+     </template>
+
+CusTable 控件属性：
+1. permsEdit: 表格内部操作按钮权限标志
+2. permsDelete: 表格内部删除、批量删除按钮权限标志
+3. permsExport: 表格内部导出Excel按钮权限标志
+4. showOperation: 是否显示操作列，默认false
+5. data: 表格数据源
+6. columns: 表格列信息
+7. findPage: 查询回调方法
+8. handleEdit: 编辑回调方法
+9. handleDelete: 删除回调方法
+10. showSum: 是否显示合计行，默认false
+11. expandAll: 表格内树形结构是否全部展开，默认false
+12. maxHeight: 表格最大高度，默认500px
+13. size: 尺寸样式，默认mini
+14. showRowNum: 是否显示行号，默认true
+15. showPagination: 是否显示页脚（批量删除、导出、分页），默认true
+16. rowKey: 行的key，在树形结构的表格时使用
+
+columns: [{prop: "userCode", label: "用户编号", minWidth: 40},
+          {prop: "userName",label: "用户名",minWidth: 80,visible: true,sortable: true,content: "用户名"},
+          {prop: "roleCode", label: "角色编号", visible: false},
+          {prop: "roleName",label: "角色名称",minWidth: 60,sortable: true,visible: true,filter: true},
+          {prop: "coCode",label: "单位编号",minWidth: 40,sortable: true,filter: true},
+          {prop: "coName", label: "单位名称", minWidth: 80, sortable: true, visible: true},
+          {prop: "used", label: "是否使用", minWidth: 30, sortable: true, visible: true}]
+
+column属性：
+1. prop: 数据属性
+2. label: 列名
+3. minWidth: 最小宽度
+4. sortable: 是否可排序
+5. visible: 是否可见
+6. content: 列头提示内容
+7. filter: 是否可过滤
+8. align: 数据对齐方式，默认居中
+9. fixed: 列是否固定
+
+

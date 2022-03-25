@@ -1,0 +1,15 @@
+使用方法：
+<PopupTreeInput
+            :data="coData"
+            v-model="dataForm.coCode">
+</PopupTreeInput>
+
+PopupTreeInput 控件属性：
+1. data: 数据源
+2. size: 控件尺寸
+5. nodeKey: 树的node-key，默认“id”
+6. accordion: 是否每次只打开一个同级树节点展开，默认true
+7. placement: 树形下拉框数据显示位置
+8. checkStrictly: 在显示复选框的情况下，是否严格的遵循父子不互相关联的做法，默认为 true
+9. singleSelect: 是否单选，默认单选
+10. placeholder: 未输入时提示文本

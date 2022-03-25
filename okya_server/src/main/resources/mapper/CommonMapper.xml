@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.top.okya.dao.CommonMapper">
+
+    <resultMap id="TreeResultMap" type="com.top.okya.util.elHelp.ElTreeBean">
+        <result column="ID" jdbcType="VARCHAR" property="id"/>
+        <result column="LABEL" jdbcType="VARCHAR" property="label"/>
+        <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId"/>
+    </resultMap>
+
+    <select id="findPage" parameterType="map" resultType="java.util.HashMap">
+        select * from ${tableName}
+        <where>
+            1=1
+            <foreach collection="jsonToMap.entrySet()" item="value" index="key">
+                <if test="value != null and value != ''">
+                    <foreach collection="key.split(',')" index="index" item="item">
+                        <choose>
+                            <when test="index == 0">
+                                and ${item}
+                            </when>
+                            <otherwise>
+                                <if test="item == '=='.toString()">
+                                    = #{value}
+                                </if>
+                                <if test="item == 'g='.toString()">
+                                    &gt;= #{value}
+                                </if>
+                                <if test="item == 'l='.toString()">
+                                    &lt;= #{value}
+                                </if>
+                                <if test="item == 'g'.toString()">
+                                    &gt; #{value}
+                                </if>
+                                <if test="item == 'l'.toString()">
+                                    &lt; #{value}
+                                </if>
+                                <if test="item == '%%'.toString()">
+                                    <!--oracle_bak: like concat(concat('%', #{value}),'%') -->
+                                    like concat('%', #{value},'%')
+                                </if>
+                                <if test="item == '()'.toString()">
+                                    <!--oracle_bak: like concat(concat('%', #{value}),'%') -->
+                                    like concat('%', #{value},'%')
+                                </if>
+                            </otherwise>
+                        </choose>
+                    </foreach>
+                </if>
+            </foreach>
+            <if test='needYear == "Y" '>
+                and SET_YEAR = #{setYear,jdbcType=VARCHAR}
+            </if>
+            <if test="sortProp != null and sortProp !='' ">
+                order by ${sortProp} ${sortOrder}
+            </if>
+        </where>
+    </select>
+
+    <select id="getSelectorData" parameterType="map" resultType="java.util.HashMap">
+        select * from ${tableName}
+        <where>
+            1=1
+            <foreach collection="jsonToMap.entrySet()" item="value" index="key">
+                <if test="key != null and key != ''">
+                    and ${key} = #{value}
+                </if>
+            </foreach>
+            <if test='needYear == "Y" '>
+                and SET_YEAR = #{setYear,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="getSelectorTreeData" parameterType="map"
+            resultMap="TreeResultMap">
+        select * from ${tableName}
+        where SET_YEAR = #{setYear,jdbcType=VARCHAR}
+        <foreach collection="jsonToMap.entrySet()" item="value" index="key">
+            <if test="key != null and key != ''">
+                and ${key} = #{value}
+            </if>
+        </foreach>
+    </select>
+
+    <insert id="saveData" parameterType="map">
+        insert into ${tableName}
+        (GUID,
+        <foreach collection="jsonToMap.entrySet()" item="value" index="key" separator=",">
+            ${key}
+        </foreach>
+        <if test='needYear == "Y" '>
+            ,SET_YEAR
+        </if>
+        )
+        values
+        (
+        <!--oracle_bak: sys_guid(), -->
+        UUID(),
+        <foreach collection="jsonToMap.entrySet()" item="value" index="key" separator=",">
+            #{value}
+        </foreach>
+        <if test='needYear == "Y" '>
+            ,#{setYear,jdbcType=VARCHAR}
+        </if>
+        )
+
+    </insert>
+
+    <update id="updateCommon" parameterType="map">
+        update ${tableName} set
+        <foreach collection="jsonToMap.entrySet()" item="value" index="key" separator=",">
+            <if test="key!='GUID' and key!='ROW_ID' and key!='SET_YEAR'">
+                ${key} =  #{value}
+            </if>
+        </foreach>
+        where
+        <foreach collection="jsonToMap.entrySet()" item="value" index="key" separator=",">
+            <if test="key=='GUID'">
+                ${key} =  #{value}
+            </if>
+        </foreach>
+        <if test='needYear == "Y" '>
+            and SET_YEAR = #{setYear,jdbcType=VARCHAR}
+        </if>
+    </update>
+
+    <delete id="deletCommon" parameterType="map">
+        delete from ${tableName} where GUID in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="getTableCols" parameterType="map"
+            resultType="java.util.HashMap">
+        <!--oracle_bak:
+        select t.COLUMN_NAME VAL, t.COLUMN_NAME LAB
+        from USER_TAB_COLS t
+        where t.TABLE_NAME = #{tableName,jdbcType=VARCHAR}
+         -->
+        SELECT COLUMN_NAME VAL, COLUMN_NAME LAB FROM information_schema.COLUMNS
+        WHERE TABLE_NAME = #{tableName,jdbcType=VARCHAR};
+    </select>
+
+</mapper>

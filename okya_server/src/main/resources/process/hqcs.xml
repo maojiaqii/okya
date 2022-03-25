@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:tns="http://www.activiti.org/test" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" expressionLanguage="http://www.w3.org/1999/XPath" id="m1621214903824" name="" targetNamespace="http://www.activiti.org/test" typeLanguage="http://www.w3.org/2001/XMLSchema">
+  <process id="hqlccs" isClosed="false" isExecutable="true" name="会签流程测试" processType="None">
+    <startEvent id="_2" name="StartEvent"/>
+    <userTask activiti:assignee="${userCode}" activiti:exclusive="true" id="UserTask_1" name="员工">
+      <extensionElements>
+        <activiti:taskListener class="com.top.okya.activiti6.ActivitiMore" event="delete"/>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="_4" sourceRef="_2" targetRef="UserTask_1"/>
+    <userTask activiti:assignee="${userCode}" activiti:exclusive="true" id="UserTask_2" name="组长">
+      <extensionElements>
+        <activiti:taskListener class="com.top.okya.activiti6.ActivitiMore" event="delete"/>
+      </extensionElements>
+    </userTask>
+    <userTask activiti:assignee="${userCode}" activiti:exclusive="true" id="UserTask_3" name="经理">
+      <extensionElements>
+        <activiti:taskListener class="com.top.okya.activiti6.ActivitiMore" event="delete"/>
+      </extensionElements>
+    </userTask>
+    <userTask activiti:assignee="${userCode}" activiti:exclusive="true" id="UserTask_4" name="董事会">
+      <extensionElements>
+        <activiti:taskListener class="com.top.okya.activiti6.ActivitiMore" event="delete"/>
+      </extensionElements>
+      <multiInstanceLoopCharacteristics activiti:collection="${userList}" activiti:elementVariable="${userCode}" isSequential="false"/>
+    </userTask>
+    <userTask activiti:assignee="${userCode}" activiti:exclusive="true" id="UserTask_5" name="人事">
+      <extensionElements>
+        <activiti:taskListener class="com.top.okya.activiti6.ActivitiMore" event="delete"/>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="_9" name="date&lt;7" sourceRef="UserTask_1" targetRef="UserTask_2">
+      <conditionExpression xsi:type="tFormalExpression">
+        <![CDATA[${date<7}]]>
+      </conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_10" name="date&gt;=7" sourceRef="UserTask_1" targetRef="UserTask_3">
+      <conditionExpression xsi:type="tFormalExpression">
+        <![CDATA[${date>=7}]]>
+      </conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_11" sourceRef="UserTask_2" targetRef="UserTask_4"/>
+    <sequenceFlow id="_12" sourceRef="UserTask_3" targetRef="UserTask_4"/>
+    <sequenceFlow id="_13" sourceRef="UserTask_4" targetRef="UserTask_5"/>
+    <endEvent id="_14" name="EndEvent"/>
+    <sequenceFlow id="_15" sourceRef="UserTask_5" targetRef="_14"/>
+  </process>
+  <bpmndi:BPMNDiagram documentation="background=#FFFFFF;count=1;horizontalcount=1;orientation=0;width=842.4;height=1195.2;imageableWidth=832.4;imageableHeight=1185.2;imageableX=5.0;imageableY=5.0" id="Diagram-_1" name="New Diagram">
+    <bpmndi:BPMNPlane bpmnElement="hqlccs">
+      <bpmndi:BPMNShape bpmnElement="_2" id="Shape-_2">
+        <omgdc:Bounds height="32.0" width="32.0" x="330.0" y="10.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="UserTask_1" id="Shape-UserTask_1">
+        <omgdc:Bounds height="55.0" width="85.0" x="310.0" y="100.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="UserTask_2" id="Shape-UserTask_2">
+        <omgdc:Bounds height="55.0" width="85.0" x="185.0" y="200.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="UserTask_3" id="Shape-UserTask_3">
+        <omgdc:Bounds height="55.0" width="85.0" x="445.0" y="200.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="UserTask_4" id="Shape-UserTask_4">
+        <omgdc:Bounds height="55.0" width="85.0" x="315.0" y="305.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="UserTask_5" id="Shape-UserTask_5">
+        <omgdc:Bounds height="55.0" width="85.0" x="320.0" y="425.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_14" id="Shape-_14">
+        <omgdc:Bounds height="32.0" width="32.0" x="350.0" y="535.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="_13" id="BPMNEdge__13" sourceElement="UserTask_4" targetElement="UserTask_5">
+        <omgdi:waypoint x="360.0" y="360.0"/>
+        <omgdi:waypoint x="360.0" y="425.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_12" id="BPMNEdge__12" sourceElement="UserTask_3" targetElement="UserTask_4">
+        <omgdi:waypoint x="485.0" y="255.0"/>
+        <omgdi:waypoint x="485.0" y="280.0"/>
+        <omgdi:waypoint x="400.0" y="332.5"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_15" id="BPMNEdge__15" sourceElement="UserTask_5" targetElement="_14">
+        <omgdi:waypoint x="366.0" y="480.0"/>
+        <omgdi:waypoint x="366.0" y="535.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_4" id="BPMNEdge__4" sourceElement="_2" targetElement="UserTask_1">
+        <omgdi:waypoint x="346.0" y="42.0"/>
+        <omgdi:waypoint x="346.0" y="100.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_9" id="BPMNEdge__9" sourceElement="UserTask_1" targetElement="UserTask_2">
+        <omgdi:waypoint x="310.0" y="130.0"/>
+        <omgdi:waypoint x="225.0" y="130.0"/>
+        <omgdi:waypoint x="225.0" y="200.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_11" id="BPMNEdge__11" sourceElement="UserTask_2" targetElement="UserTask_4">
+        <omgdi:waypoint x="225.0" y="255.0"/>
+        <omgdi:waypoint x="225.0" y="330.0"/>
+        <omgdi:waypoint x="315.0" y="330.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_10" id="BPMNEdge__10" sourceElement="UserTask_1" targetElement="UserTask_3">
+        <omgdi:waypoint x="395.0" y="127.5"/>
+        <omgdi:waypoint x="485.0" y="188.0"/>
+        <omgdi:waypoint x="485.0" y="200.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

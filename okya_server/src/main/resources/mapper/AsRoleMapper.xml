@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.top.okya.dao.AsRoleMapper">
+    <resultMap id="BaseResultMap" type="com.top.okya.pojo.AsRole">
+        <id column="GUID" jdbcType="VARCHAR" property="guid"/>
+        <result column="ROLE_CODE" jdbcType="VARCHAR" property="roleCode"/>
+        <result column="ROLE_NAME" jdbcType="VARCHAR" property="roleName"/>
+        <result column="USED" jdbcType="VARCHAR" property="used"/>
+        <result column="SET_YEAR" jdbcType="VARCHAR" property="setYear"/>
+    </resultMap>
+    <select id="getRoles" parameterType="map"
+            resultMap="BaseResultMap">
+        select * from As_Role
+        <where>
+            SET_YEAR = #{setYear,jdbcType=VARCHAR}
+            and USED = 'Y'
+        </where>
+    </select>
+    <select id="findPage" parameterType="map"
+            resultMap="BaseResultMap">
+        select * from AS_ROLE
+        <where>1=1
+            <if test="roleCode != null and roleCode != ''">
+                and ROLE_CODE = #{roleCode,jdbcType=VARCHAR}
+            </if>
+            and SET_YEAR = #{setYear,jdbcType=VARCHAR}
+            <if test="sortProp != null and sortProp != ''">
+                order by ${sortProp} ${sortOrder}
+            </if>
+        </where>
+    </select>
+    <insert id="saveRole" parameterType="map">
+		insert into AS_ROLE
+		(GUID, ROLE_CODE, ROLE_NAME, USED, SET_YEAR)
+		values
+		(#{asRole.guid,jdbcType=VARCHAR},
+		#{asRole.roleCode,jdbcType=VARCHAR},
+		#{asRole.roleName,jdbcType=VARCHAR},
+		#{asRole.used,jdbcType=VARCHAR},
+		#{asRole.setYear,jdbcType=VARCHAR})
+	</insert>
+    <update id="updateRole" parameterType="map">
+		update AS_ROLE
+		set
+		ROLE_NAME = #{asRole.roleName,jdbcType=VARCHAR},
+		USED = #{asRole.used,jdbcType=VARCHAR}
+		where ROLE_CODE = #{asRole.roleCode,jdbcType=VARCHAR}
+		and SET_YEAR = #{asRole.setYear,jdbcType=VARCHAR}
+	</update>
+    <delete id="deleteRole" parameterType="map">
+        delete from AS_ROLE
+        where ROLE_CODE in
+        <foreach collection="asRoles" open="(" close=")"
+                 separator="," item="item">
+            #{item.roleCode}
+        </foreach>
+        and SET_YEAR =
+        #{setYear,jdbcType=VARCHAR}
+    </delete>
+    <delete id="deleteRolePermissions" parameterType="map">
+        delete from AS_ROLE_PERMISSION
+        where ROLE_CODE = #{roleCode,jdbcType=VARCHAR}
+        and SET_YEAR =
+        #{setYear,jdbcType=VARCHAR}
+    </delete>
+    <insert id="saveRolePermissions" parameterType="map">
+        insert into
+        AS_ROLE_PERMISSION
+        (GUID, ROLE_CODE, COMPO_ID, SET_YEAR)
+        select
+        A.* from (
+        <foreach collection="asRolePermissions" item="item" index="index"
+                 separator="UNION ALL">
+            SELECT #{item.guid,jdbcType=VARCHAR},
+            #{item.roleCode,jdbcType=VARCHAR},
+            #{item.compoId,jdbcType=VARCHAR},
+            #{item.setYear,jdbcType=VARCHAR}
+            FROM DUAL
+        </foreach>
+        )A
+	</insert>
+</mapper>

@@ -1,0 +1,28 @@
+.child-form-field {
+  cursor: pointer;
+  position: relative;
+  font-size: 14px;
+  padding: 5px;
+  display: inline-block;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  width: 90%;
+  border: 1px solid #bfcbd9;
+  transition: all 1s;
+}
+
+.comfirm-word {
+  position: absolute;
+  text-align: center;
+  width: 300px;
+  height: 20px;
+  font-size: 20px;
+  top: 30%;
+  width: 90%;
+  margin-top: -10px;
+  color: #575757;
+  -webkit-user-select: none; /* 禁止 DIV 中的文本被鼠标选中 */
+  -moz-user-select: none; /* 禁止 DIV 中的文本被鼠标选中 */
+  -ms-user-select: none; /* 禁止 DIV 中的文本被鼠标选中 */
+  user-select: none;
+}

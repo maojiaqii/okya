@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.top.okya.dao.EChartMapper">
+
+    <resultMap type="com.top.okya.util.eChart.EChartBean" id="EChartBeanMap">
+        <result property="name" column="MC" jdbcType="VARCHAR"/>
+        <result property="value" column="CT" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getCommonData" resultMap="EChartBeanMap">
+        select
+          MC, CT, BILL_DATE
+        from ${tableName}
+        where BILL_DATE = #{yearMonthDay}
+    </select>
+
+</mapper>

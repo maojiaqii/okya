@@ -1,0 +1,14 @@
+使用方法：
+<CusButton perms="base:user:new" type="primary" @click="handleAdd"/>
+
+CusButton 控件属性：
+1. perms: 按钮权限标志
+2. type: 按钮类型
+3. disabled: 状态，默认false
+4. click: 点击事件
+5. loading: 是否显示载入状态，默认false
+6. size: 控件尺寸，默认small
+7. btnName: 按钮名称
+8. btnIcon: 按钮图标
+
+

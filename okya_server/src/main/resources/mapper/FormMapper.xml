@@ -1,0 +1,574 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.top.okya.dao.FormMapper">
+
+    <resultMap id="FormTempletResultMap" type="com.top.okya.pojo.AsForm">
+        <result column="GUID" jdbcType="VARCHAR" property="guid"/>
+        <result column="FORM_ID" jdbcType="VARCHAR" property="formId"/>
+        <result column="FORM_NAME" jdbcType="VARCHAR" property="formName"/>
+        <result column="FORM" jdbcType="VARBINARY" property="form" javaType="String"/>
+        <result column="SET_YEAR" jdbcType="VARCHAR" property="setYear"/>
+    </resultMap>
+
+    <resultMap id="TreeResultMap" type="com.top.okya.util.elHelp.ElTreeBean">
+        <result column="ID" jdbcType="VARCHAR" property="id"/>
+        <result column="LABEL" jdbcType="VARCHAR" property="label"/>
+        <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId"/>
+    </resultMap>
+
+    <resultMap type="com.top.okya.pojo.AsFormMainTable" id="AsFormMainTableMap">
+        <result property="guid" column="GUID" jdbcType="VARCHAR"/>
+        <result property="formId" column="FORM_ID" jdbcType="VARCHAR"/>
+        <result property="tableName" column="TABLE_NAME" jdbcType="VARCHAR"/>
+        <result property="setYear" column="SET_YEAR" jdbcType="VARCHAR"/>
+        <result property="isMainTable" column="IS_MAIN_TABLE" jdbcType="VARCHAR"/>
+        <result property="hasSetYear" column="HAS_SET_YEAR" jdbcType="VARCHAR"/>
+        <result property="mainFormId" column="MAIN_FORM_ID" jdbcType="VARCHAR"/>
+        <result property="viewSql" column="VIEW_SQL" jdbcType="CLOB" javaType="String"/>
+    </resultMap>
+
+    <resultMap type="com.top.okya.pojo.AsFormMainTableColums" id="AsFormMainTableColumsMap">
+        <result property="guid" column="GUID" jdbcType="VARCHAR"/>
+        <result property="formId" column="FORM_ID" jdbcType="VARCHAR"/>
+        <result property="tableName" column="TABLE_NAME" jdbcType="VARCHAR"/>
+        <result property="formField" column="FORM_FIELD" jdbcType="VARCHAR"/>
+        <result property="tableField" column="TABLE_FIELD" jdbcType="VARCHAR"/>
+        <result property="tableFieldType" column="TABLE_FIELD_TYPE" jdbcType="VARCHAR"/>
+        <result property="isUnique" column="IS_UNIQUE" jdbcType="VARCHAR"/>
+        <result property="joinTable" column="JOIN_TABLE" jdbcType="VARCHAR"/>
+        <result property="joinTableColumn" column="JOIN_TABLE_COLUMN" jdbcType="VARCHAR"/>
+        <result property="setYear" column="SET_YEAR" jdbcType="VARCHAR"/>
+        <result property="isNull" column="IS_NULL" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap type="com.top.okya.pojo.AsTable" id="AsTableMap">
+        <result property="guid" column="GUID" jdbcType="VARCHAR"/>
+        <result property="tableId" column="TABLE_ID" jdbcType="VARCHAR"/>
+        <result property="tableName" column="TABLE_NAME" jdbcType="VARCHAR"/>
+        <result property="dataSource" column="DATA_SOURCE" jdbcType="VARCHAR"/>
+        <result property="size" column="size" jdbcType="VARCHAR"/>
+        <result property="maxHeight" column="MAX_HEIGHT" jdbcType="VARCHAR"/>
+        <result property="showRowNum" column="SHOW_ROW_NUM" jdbcType="VARCHAR"/>
+        <result property="showPagination" column="SHOW_PAGINATION" jdbcType="VARCHAR"/>
+        <result property="showSum" column="SHOW_SUM" jdbcType="VARCHAR"/>
+        <result property="showOperation" column="SHOW_OPERATION" jdbcType="VARCHAR"/>
+        <result property="permsEdit" column="PERMS_EDIT" jdbcType="VARCHAR"/>
+        <result property="permsDelete" column="PERMS_DELETE" jdbcType="VARCHAR"/>
+        <result property="permsExport" column="PERMS_EXPORT" jdbcType="VARCHAR"/>
+        <result property="setYear" column="SET_YEAR" jdbcType="VARCHAR"/>
+        <result property="permsNew" column="PERMS_NEW" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap type="com.top.okya.pojo.AsTableColumns" id="AsTableColumnsMap">
+        <result property="guid" column="GUID" jdbcType="VARCHAR"/>
+        <result property="prop" column="COLUMN_ID" jdbcType="VARCHAR"/>
+        <result property="label" column="COLUMN_NAME" jdbcType="VARCHAR"/>
+        <result property="width" column="COLUMN_WIDTH" jdbcType="VARCHAR"/>
+        <result property="sortable" column="SORTABLE" jdbcType="VARCHAR"/>
+        <result property="visible" column="VISIBLITY" jdbcType="VARCHAR"/>
+        <result property="content" column="CONTENT_INFO" jdbcType="VARCHAR"/>
+        <result property="filter" column="FILTERABLE" jdbcType="VARCHAR"/>
+        <result property="align" column="ALIGN" jdbcType="VARCHAR"/>
+        <result property="minWidth" column="MIN_WIDTH" jdbcType="VARCHAR"/>
+        <result property="setYear" column="SET_YEAR" jdbcType="VARCHAR"/>
+        <result property="tableId" column="TABLE_ID" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap type="com.top.okya.pojo.AsFormSearchBusiness" id="AsFormSearchBusinessMap">
+        <result property="guid" column="GUID" jdbcType="VARCHAR"/>
+        <result property="formId" column="FORM_ID" jdbcType="VARCHAR"/>
+        <result property="tableId" column="TABLE_ID" jdbcType="VARCHAR"/>
+        <result property="searchField" column="SEARCH_FIELD" jdbcType="VARCHAR"/>
+        <result property="searchName" column="SEARCH_NAME" jdbcType="VARCHAR"/>
+        <result property="searchCompo" column="SEARCH_COMPO" jdbcType="VARCHAR"/>
+        <result property="searchCondition" column="SEARCH_CONDITION" jdbcType="VARCHAR"/>
+        <result property="dataSource" column="DATA_SOURCE" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getRadioCheckBoxData" resultType="java.util.HashMap">
+        select *
+        from ${tableName} t
+        where t.set_Year = #{setYear,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getSelectorData" resultType="java.util.HashMap">
+        select *
+        from ${tableName} t
+        where t.set_Year = #{setYear,jdbcType=VARCHAR}
+        <if test="'baseOn' == relation">
+            and ${affectField} in
+            <foreach collection="conditions" open="(" close=")"
+                     separator="," item="item">
+                #{item}
+            </foreach>
+        </if>
+        <if test="'remove' == relation">
+            and ${affectField} not in
+            <foreach collection="conditions" open="(" close=")"
+                     separator="," item="item">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="getSelectTreeData" parameterType="map"
+            resultMap="TreeResultMap">
+        select * from ${tableName} t
+        where SET_YEAR = #{setYear,jdbcType=VARCHAR}
+        <if test="'baseOn' == relation">
+            and ${affectField} in
+            <foreach collection="conditions" open="(" close=")"
+                     separator="," item="item">
+                #{item}
+            </foreach>
+        </if>
+        <if test="'remove' == relation">
+            and ${affectField} not in
+            <foreach collection="conditions" open="(" close=")"
+                     separator="," item="item">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="getDatasourceField" resultType="java.util.HashMap">
+        <!--oracle_bak:
+        select t.COLUMN_NAME VAL, t.COLUMN_NAME LAB
+        from USER_TAB_COLS t
+        where t.TABLE_NAME = #{datasource,jdbcType=VARCHAR}
+        -->
+        SELECT COLUMN_NAME VAL, COLUMN_NAME LAB FROM information_schema.COLUMNS
+        WHERE TABLE_NAME = #{datasource,jdbcType=VARCHAR};
+    </select>
+
+    <insert id="saveFormTempLet" parameterType="map">
+		insert into AS_FORM
+		(GUID, FORM_ID, FORM_NAME, FORM)
+		values
+		(#{asForm.guid,jdbcType=VARCHAR},
+		#{asForm.formId,jdbcType=VARCHAR},
+		#{asForm.formName,jdbcType=VARCHAR},
+		#{asForm.form,jdbcType=VARCHAR})
+	</insert>
+
+    <select id="findFormTemplet" parameterType="map"
+            resultMap="FormTempletResultMap">
+        select * from AS_FORM
+        <where>1=1
+            <if test="formName != null and formName != ''">
+                and FORM_NAME = #{formName,jdbcType=VARCHAR}
+            </if>
+            <if test="sortProp != null and sortProp != ''">
+                order by ${sortProp} ${sortOrder}
+            </if>
+        </where>
+    </select>
+
+    <select id="findFormTempletSelector" parameterType="map"
+            resultType="java.util.HashMap">
+        select GUID, FORM_ID, FORM_NAME, FORM,
+        case
+        when FORM_ID in (select FORM_ID from AS_FORM_MAIN_TABLE) then
+        'true'
+        else
+        'false'
+        end as CAN_SELECT
+        from AS_FORM
+    </select>
+
+    <select id="getFormTempletForBusiness" parameterType="map"
+            resultType="java.util.HashMap">
+        select GUID, FORM_ID, FORM_NAME,
+        case
+        when FORM_ID in (select FORM_ID from AS_FORM_TABLE_BUSINESS) then
+        'true'
+        else
+        'false'
+        end as CAN_SELECT
+        from AS_FORM
+        where FORM_ID in (select MAIN_FORM_ID from AS_FORM_MAIN_TABLE)
+    </select>
+
+    <delete id="deleteFormTempLet" parameterType="map">
+        delete from AS_FORM
+        where FORM_ID in
+        <foreach collection="asForms" open="(" close=")"
+                 separator="," item="item">
+            #{item.formId}
+        </foreach>
+    </delete>
+
+    <insert id="saveFormColumns" parameterType="map">
+        insert into
+        AS_FORM_MAIN_TABLE_COLUMS
+        (GUID, FORM_ID, TABLE_NAME, FORM_FIELD, TABLE_FIELD, TABLE_FIELD_TYPE, IS_UNIQUE, IS_NULL, JOIN_TABLE, JOIN_TABLE_COLUMN)
+        select
+        A.* from (
+        <foreach collection="asFormMainTableColumsList" item="item" index="index"
+                 separator="UNION ALL">
+            SELECT #{item.guid,jdbcType=VARCHAR},
+            #{item.formId,jdbcType=VARCHAR},
+            #{item.tableName,jdbcType=VARCHAR},
+            #{item.formField,jdbcType=VARCHAR},
+            #{item.tableField,jdbcType=VARCHAR},
+            #{item.tableFieldType,jdbcType=VARCHAR},
+            #{item.isUnique,jdbcType=VARCHAR},
+            #{item.isNull,jdbcType=VARCHAR},
+            #{item.joinTable,jdbcType=VARCHAR},
+            #{item.joinTableColumn,jdbcType=VARCHAR}
+            FROM DUAL
+        </foreach>
+        )A
+    </insert>
+
+    <insert id="saveFormTable" parameterType="map">
+        insert into
+        AS_FORM_MAIN_TABLE
+        (GUID, FORM_ID, TABLE_NAME, IS_MAIN_TABLE, HAS_SET_YEAR, MAIN_FORM_ID, VIEW_SQL)
+        select
+        A.* from (
+        <foreach collection="asFormMainTableList" item="item" index="index"
+                 separator="UNION ALL">
+            SELECT #{item.guid,jdbcType=VARCHAR},
+            #{item.formId,jdbcType=VARCHAR},
+            #{item.tableName,jdbcType=VARCHAR},
+            #{item.isMainTable,jdbcType=VARCHAR},
+            #{item.hasSetYear,jdbcType=VARCHAR},
+            #{item.mainFormId,jdbcType=VARCHAR},
+            #{item.viewSql,jdbcType=VARCHAR}
+            FROM DUAL
+        </foreach>
+        )A
+    </insert>
+
+    <update id="createTable" parameterType="map">
+        <!--oracle_bak:
+        CREATE TABLE ${mainTableName} (
+        guid varchar2(100) NOT NULL,
+        ${mainTableColumns}
+        constraint PK_${mainTableName} primary key (GUID)
+        <if test="constrains != null and constrains != ''">
+            ,constraint UN_${mainTableName} unique (${constrains})
+        </if>
+        )
+        -->
+        CREATE TABLE ${mainTableName} (
+        `GUID` varchar(100) NOT NULL,
+        ${mainTableColumns}
+        PRIMARY KEY (`GUID`)
+        <if test="constrains != null and constrains != ''">
+            ,UNIQUE INDEX UN_${mainTableName}(constrains)
+        </if>
+        )
+    </update>
+
+    <update id="dropTable" parameterType="map">
+        DROP TABLE ${tableName}
+    </update>
+
+    <select id="findFormDataSource" resultType="java.util.HashMap">
+        select t.FORM_ID, t.TABLE_NAME, t.HAS_SET_YEAR from AS_FORM_MAIN_TABLE t
+        <where>1=1
+            <if test="formId != null and formId != ''">
+                and t.FORM_ID = #{formId,jdbcType=VARCHAR}
+            </if>
+            <if test="tableName != null and tableName != ''">
+                and t.TABLE_NAME = #{tableName,jdbcType=VARCHAR}
+            </if>
+            and t.IS_MAIN_TABLE = '0'
+            <if test="sortProp != null and sortProp != ''">
+                order by ${sortProp} ${sortOrder}
+            </if>
+        </where>
+    </select>
+
+    <select id="getTableInfo" resultMap="AsFormMainTableMap">
+        select t.* from AS_FORM_MAIN_TABLE t
+        <where>
+            t.MAIN_FORM_ID = #{formId,jdbcType=VARCHAR}
+        </where>
+    </select>
+
+    <select id="getTableColumns" resultMap="AsFormMainTableColumsMap">
+        select t.* from AS_FORM_MAIN_TABLE_COLUMS t
+        <where>
+            t.FORM_ID = #{formId,jdbcType=VARCHAR}
+        </where>
+    </select>
+
+    <select id="getOldFormTables" resultType="java.lang.String">
+        select t.TABLE_NAME from AS_FORM_MAIN_TABLE t
+        <where>
+            t.MAIN_FORM_ID = #{formId,jdbcType=VARCHAR}
+        </where>
+    </select>
+
+    <delete id="deleteFormTable" parameterType="map">
+        delete from AS_FORM_MAIN_TABLE
+        where TABLE_NAME in
+        <foreach collection="oldTables" open="(" close=")"
+                 separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="deleteFormColumns" parameterType="map">
+        delete from AS_FORM_MAIN_TABLE_COLUMS
+        where TABLE_NAME in
+        <foreach collection="oldTables" open="(" close=")"
+                 separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="createView" parameterType="map">
+        ${viewSql}
+    </update>
+
+    <select id="getFormBusinessTableName" parameterType="map"
+            resultType="java.lang.String">
+        <!--oracle_bak:
+        select trim(replace(to_char(substr(upper(t.view_sql), instr(upper(t.view_sql), ' VIEW ', 1, 1) + 5, instr(upper(t.view_sql), 'AS', 1, 1) - instr(upper(t.view_sql), ' VIEW ', 1, 1) - 5)), chr(10), ''))
+        from AS_FORM_MAIN_TABLE t
+        where t.FORM_ID = #{formId,jdbcType=VARCHAR}
+        -->
+        SELECT
+            trim(
+                REPLACE (
+                    SUBSTRING(
+                        upper(t.view_sql),
+                        LOCATE(
+                            'VIEW',
+                        upper(t.view_sql)) + 4,
+                        LOCATE(
+                            'AS',
+                            upper(t.view_sql)) - LOCATE(
+                            'VIEW',
+                        upper(t.view_sql)) - 4
+                    ),
+                    CHAR ( 10 ),
+                    ''
+                ))
+        FROM AS_FORM_MAIN_TABLE t
+        where t.FORM_ID = #{formId,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="saveFormTableBusiness" parameterType="map">
+		insert into AS_FORM_TABLE_BUSINESS
+		(GUID, FORM_ID, TABLE_ID)
+		values
+		(#{asFormTableBusiness.guid,jdbcType=VARCHAR},
+		#{asFormTableBusiness.formId,jdbcType=VARCHAR},
+		#{asFormTableBusiness.tableId,jdbcType=VARCHAR})
+	</insert>
+
+    <insert id="saveTable" parameterType="map">
+		insert into AS_TABLE
+		(GUID, TABLE_ID, TABLE_NAME, DATA_SOURCE, "size", MAX_HEIGHT, SHOW_ROW_NUM, SHOW_PAGINATION, SHOW_SUM, SHOW_OPERATION, PERMS_NEW, PERMS_EDIT, PERMS_DELETE, PERMS_EXPORT)
+		values
+		(#{asTable.guid,jdbcType=VARCHAR},
+		#{asTable.tableId,jdbcType=VARCHAR},
+		#{asTable.tableName,jdbcType=VARCHAR},
+		#{asTable.dataSource,jdbcType=VARCHAR},
+		#{asTable.size,jdbcType=VARCHAR},
+		#{asTable.maxHeight,jdbcType=VARCHAR},
+		#{asTable.showRowNum,jdbcType=VARCHAR},
+		#{asTable.showPagination,jdbcType=VARCHAR},
+		#{asTable.showSum,jdbcType=VARCHAR},
+		#{asTable.showOperation,jdbcType=VARCHAR},
+		#{asTable.permsNew,jdbcType=VARCHAR},
+		#{asTable.permsEdit,jdbcType=VARCHAR},
+		#{asTable.permsDelete,jdbcType=VARCHAR},
+		#{asTable.permsExport,jdbcType=VARCHAR})
+	</insert>
+
+    <insert id="saveTableColumns" parameterType="map">
+        insert into AS_TABLE_COLUMNS
+        (GUID, COLUMN_ID, COLUMN_NAME, COLUMN_WIDTH, SORTABLE, VISIBLITY, CONTENT_INFO, FILTERABLE, ALIGN,
+        MIN_WIDTH, TABLE_ID)
+        select
+        A.* from (
+        <foreach collection="asTableColumns" item="item" index="index"
+                 separator="UNION ALL">
+            SELECT
+            <!--oracle_bak: sys_guid(), -->
+            UUID(),
+            #{item.prop,jdbcType=VARCHAR},
+            #{item.label,jdbcType=VARCHAR},
+            #{item.width,jdbcType=VARCHAR},
+            #{item.sortable,jdbcType=VARCHAR},
+            #{item.visible,jdbcType=VARCHAR},
+            #{item.content,jdbcType=VARCHAR},
+            #{item.filter,jdbcType=VARCHAR},
+            #{item.align,jdbcType=VARCHAR},
+            #{item.minWidth,jdbcType=VARCHAR},
+            #{tableId,jdbcType=VARCHAR}
+            FROM DUAL
+        </foreach>
+        )A
+    </insert>
+
+    <insert id="saveFormSearchBusiness" parameterType="map">
+        insert into AS_FORM_SEARCH_BUSINESS
+        (GUID, FORM_ID, TABLE_ID, SEARCH_FIELD, SEARCH_NAME, SEARCH_COMPO, SEARCH_CONDITION, DATA_SOURCE)
+        select
+        A.* from (
+        <foreach collection="asFormSearchBusiness" item="item" index="index"
+                 separator="UNION ALL">
+            SELECT
+            <!--oracle_bak: sys_guid(), -->
+            UUID(),
+            #{formId,jdbcType=VARCHAR},
+            #{tableId,jdbcType=VARCHAR},
+            #{item.searchField,jdbcType=VARCHAR},
+            #{item.searchName,jdbcType=VARCHAR},
+            #{item.searchCompo,jdbcType=VARCHAR},
+            #{item.searchCondition,jdbcType=VARCHAR},
+            #{item.dataSource,jdbcType=VARCHAR}
+            FROM DUAL
+        </foreach>
+        )A
+    </insert>
+
+    <select id="findFormBusiness" resultType="java.util.HashMap">
+        select t.FORM_ID, a.FORM_NAME from AS_FORM_TABLE_BUSINESS t
+        left join AS_FORM a
+        on a.FORM_ID = t.FORM_ID
+        <where>1=1
+            <if test="formId != null and formId != ''">
+                and t.FORM_ID = #{formId,jdbcType=VARCHAR}
+            </if>
+            <if test="sortProp != null and sortProp != ''">
+                order by ${sortProp} ${sortOrder}
+            </if>
+        </where>
+    </select>
+
+    <select id="getSelectFormTableByFormId" resultMap="AsTableMap">
+        select t.* from AS_TABLE t
+        <where>
+            t.table_id in (
+            select a.table_id from AS_FORM_TABLE_BUSINESS a where a.FORM_ID in
+            <foreach collection="formIds" open="(" close=")"
+                     separator="," item="item">
+                #{item}
+            </foreach>
+            )
+        </where>
+    </select>
+
+    <select id="getSelectFormSearchByFormId" resultMap="AsFormSearchBusinessMap">
+        select t.* from AS_FORM_SEARCH_BUSINESS t
+        <where>
+            t.FORM_ID = #{formId,jdbcType=VARCHAR}
+        </where>
+    </select>
+
+    <select id="getSelectFormTableColumnsByFormId" resultMap="AsTableColumnsMap">
+        select t.* from AS_TABLE_COLUMNS t
+        <where>
+            t.table_id = (
+            select a.table_id from AS_FORM_TABLE_BUSINESS a where a.FORM_ID = #{formId,jdbcType=VARCHAR}
+            )
+        </where>
+    </select>
+
+    <update id="updateTable" parameterType="map">
+		update AS_TABLE
+		set
+		TABLE_NAME = #{asTable.tableName,jdbcType=VARCHAR},
+		DATA_SOURCE = #{asTable.dataSource,jdbcType=VARCHAR},
+		"size" = #{asTable.size,jdbcType=VARCHAR},
+		MAX_HEIGHT = #{asTable.maxHeight,jdbcType=VARCHAR},
+		SHOW_ROW_NUM = #{asTable.showRowNum,jdbcType=VARCHAR},
+		SHOW_PAGINATION = #{asTable.showPagination,jdbcType=VARCHAR},
+		SHOW_SUM = #{asTable.showSum,jdbcType=VARCHAR},
+		SHOW_OPERATION = #{asTable.showOperation,jdbcType=VARCHAR},
+		PERMS_NEW = #{asTable.permsNew,jdbcType=VARCHAR},
+		PERMS_EDIT = #{asTable.permsEdit,jdbcType=VARCHAR},
+		PERMS_DELETE = #{asTable.permsDelete,jdbcType=VARCHAR},
+		PERMS_EXPORT = #{asTable.permsExport,jdbcType=VARCHAR}
+		where TABLE_ID = #{asTable.tableId,jdbcType=VARCHAR}
+	</update>
+
+    <delete id="deleteTableColumns" parameterType="map">
+        delete from AS_TABLE_COLUMNS
+        where TABLE_ID in
+        <foreach collection="tableIds" open="(" close=")"
+                 separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="deleteFormSearch" parameterType="map">
+        delete from AS_FORM_SEARCH_BUSINESS
+        where TABLE_ID in
+        <foreach collection="tableIds" open="(" close=")"
+                 separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="deleteTables" parameterType="map">
+        delete from AS_TABLE
+        where TABLE_ID in
+        <foreach collection="tableIds" open="(" close=")"
+                 separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="deleteFormBusiness" parameterType="map">
+        delete from AS_FORM_TABLE_BUSINESS
+        where TABLE_ID in
+        <foreach collection="tableIds" open="(" close=")"
+                 separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="getPageButton" parameterType="map" resultType="java.util.HashMap">
+        select t.PERMS_NEW, t.PERMS_EDIT, t.PERMS_DELETE, t.PERMS_EXPORT from AS_TABLE t
+        <where>
+            t.table_id = (
+            select a.table_id from AS_FORM_TABLE_BUSINESS a where a.FORM_ID = #{formId,jdbcType=VARCHAR}
+            )
+        </where>
+    </select>
+
+    <select id="needYear" parameterType="map"
+            resultType="java.lang.String">
+        select HAS_SET_YEAR
+        from AS_FORM_MAIN_TABLE
+        where FORM_ID = #{formId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getFormTempletByFormId" parameterType="map"
+            resultType="java.lang.String">
+        select FORM
+        from AS_FORM
+        where FORM_ID = #{formId,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insertIntoTable" parameterType="map">
+        insert into ${tableName} ( ${col} ) values ( ${val} )
+    </insert>
+
+    <select id="getSelectRecord" resultType="java.util.HashMap">
+        select * from ${tableName}
+        where ${field} in
+        <foreach collection="guid" open="(" close=")"
+                 separator="," item="item">
+            #{item}
+        </foreach>
+    </select>
+
+    <delete id="deleteSelectRecord" parameterType="map">
+        delete from ${tableName}
+        where ${field} in
+        <foreach collection="guid" open="(" close=")"
+                 separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

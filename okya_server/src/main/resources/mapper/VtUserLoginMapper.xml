@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.top.okya.dao.VtUserLoginMapper">
+    <resultMap id="BaseResultMap" type="com.top.okya.pojo.VtUserLogin">
+        <result column="USER_CODE" jdbcType="VARCHAR" property="userCode"/>
+        <result column="USER_NAME" jdbcType="VARCHAR" property="userName"/>
+        <result column="PASS_WORD" jdbcType="VARCHAR" property="passWord"/>
+        <result column="USED" jdbcType="VARCHAR" property="used"/>
+        <result column="SET_YEAR" jdbcType="VARCHAR" property="setYear"/>
+        <result column="ROLE_CODE" jdbcType="VARCHAR" property="roleCode"/>
+        <result column="ROLE_NAME" jdbcType="VARCHAR" property="roleName"/>
+    </resultMap>
+    <select id="userLogin" parameterType="map"
+            resultMap="BaseResultMap">
+		select * from VT_USER_LOGIN
+		where USER_CODE =
+		#{userCode,jdbcType=VARCHAR}
+		and SET_YEAR = #{setYear,jdbcType=VARCHAR}
+    </select>
+</mapper>

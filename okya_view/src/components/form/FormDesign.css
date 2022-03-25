@@ -1,0 +1,88 @@
+.grid-content {
+  border-radius: 4px;
+  height: 500px;
+}
+
+.form-empty {
+  position: absolute;
+  text-align: center;
+  width: 300px;
+  height: 20px;
+  font-size: 20px;
+  top: 50%;
+  width: 100%;
+  margin-top: -10px;
+  color: #ccc;
+  -webkit-user-select: none; /* 禁止 DIV 中的文本被鼠标选中 */
+  -moz-user-select: none; /* 禁止 DIV 中的文本被鼠标选中 */
+  -ms-user-select: none; /* 禁止 DIV 中的文本被鼠标选中 */
+  user-select: none;
+}
+
+.list-complete-item0 {
+  cursor: pointer;
+  position: relative;
+  font-size: 14px;
+  padding: 5px;
+  display: inline-block;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  width: 90%;
+  border: 1px solid #bfcbd9;
+  transition: all 1s;
+}
+
+.list-complete-item {
+  cursor: pointer;
+  position: relative;
+  font-size: 14px;
+  padding: 5px;
+  display: inline-block;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  width: 36%;
+  border: 1px solid #bfcbd9;
+  transition: all 1s;
+}
+
+.list-complete-item1 {
+  cursor: pointer;
+  position: relative;
+  padding: 5px;
+  display: inline-block;
+  border: 1px solid #bfcbd9;
+  transition: all 1s;
+}
+
+.list-complete-item1 .el-form-item {
+  margin-bottom: 0px;
+}
+
+.sortable-chosen {
+  background: rgba(189, 10, 34, 0.33);
+}
+
+.sortable-ghost {
+  background: rgba(19, 176, 34, 0.53);
+}
+
+.el-dialog-div{
+  height: 60vh;
+  overflow: auto;
+}
+
+.comfirm-word {
+  position: absolute;
+  text-align: center;
+  width: 300px;
+  height: 20px;
+  font-size: 20px;
+  top: 30%;
+  width: 90%;
+  margin-top: -10px;
+  color: #575757;
+  -webkit-user-select: none; /* 禁止 DIV 中的文本被鼠标选中 */
+  -moz-user-select: none; /* 禁止 DIV 中的文本被鼠标选中 */
+  -ms-user-select: none; /* 禁止 DIV 中的文本被鼠标选中 */
+  user-select: none;
+}

@@ -1,0 +1,8 @@
+使用方法：
+<IconSelector ref="icons" :prop="dataForm.icon" @selected="selectedIcon"/>
+
+IconSelector 控件属性：
+1. prop: 表单属性
+2. selected: 点击事件
+
+

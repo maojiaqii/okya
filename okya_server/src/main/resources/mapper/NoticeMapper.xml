@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.top.okya.dao.NoticeMapper">
+
+    <resultMap type="com.top.okya.pojo.BsNotices" id="BsNoticesMap">
+        <result property="guid" column="GUID" jdbcType="VARCHAR"/>
+        <result property="noticeId" column="NOTICE_ID" jdbcType="VARCHAR"/>
+        <result property="noticeTitle" column="NOTICE_TITLE" jdbcType="VARCHAR"/>
+        <result property="noticeContent" column="NOTICE_CONTENT" jdbcType="VARCHAR"/>
+        <result property="noticeFile" column="NOTICE_FILE" jdbcType="VARCHAR"/>
+        <result property="createUserCode" column="CREATE_USER_CODE" jdbcType="VARCHAR"/>
+        <result property="createUserName" column="CREATE_USER_NAME" jdbcType="VARCHAR"/>
+        <result property="createDate" column="CREATE_DATE" jdbcType="VARCHAR"/>
+        <result property="sendStatus" column="SEND_STATUS" jdbcType="VARCHAR"/>
+        <result property="noticeLevel" column="NOTICE_LEVEL" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap type="com.top.okya.pojo.BsNoticeTarget" id="BsNoticeTargetMap">
+        <result property="guid" column="GUID" jdbcType="VARCHAR"/>
+        <result property="noticeId" column="NOTICE_ID" jdbcType="VARCHAR"/>
+        <result property="userCode" column="USER_CODE" jdbcType="VARCHAR"/>
+        <result property="receiveStatus" column="RECEIVE_STATUS" jdbcType="VARCHAR"/>
+        <result property="checkDate" column="CHECK_DATE" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap type="com.top.okya.util.elHelp.ElTransferBean" id="ElTransferBeanMap">
+        <result property="key" column="USER_CODE" jdbcType="VARCHAR"/>
+        <result property="label" column="USER_NAME" jdbcType="VARCHAR"/>
+        <result property="disabled" column="USED" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getAllUsers" parameterType="map" resultMap="ElTransferBeanMap">
+        <!--oracle_bak: select USER_CODE, USER_CODE || '-' || USER_NAME USER_NAME, USED from AS_USER where SET_YEAR = #{setYear,jdbcType=VARCHAR} -->
+        select USER_CODE, concat(USER_CODE, '-', USER_NAME) USER_NAME, USED from AS_USER where SET_YEAR = #{setYear,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getSelectUsers" parameterType="map" resultType="java.lang.String">
+        select CONTACT_USER_CODE from bs_Frequent_Contacts where MAIN_USER_CODE = #{userCode,jdbcType=VARCHAR}
+    </select>
+
+    <delete id="deleteFrequentContacts" parameterType="map">
+        delete from bs_Frequent_Contacts
+        where MAIN_USER_CODE = #{userCode,jdbcType=VARCHAR}
+    </delete>
+
+    <insert id="saveFrequentContacts" parameterType="map">
+        insert into bs_Frequent_Contacts
+        (GUID, MAIN_USER_CODE, CONTACT_USER_CODE)
+        select
+        A.* from (
+        <foreach collection="userCodes" item="item" index="index"
+                 separator="UNION ALL">
+            SELECT
+            <!--oracle_bak: sys_guid(), -->
+            UUID(), #{userCode,jdbcType=VARCHAR}, #{item,jdbcType=VARCHAR}
+            FROM DUAL
+        </foreach>
+        )A
+    </insert>
+
+    <insert id="saveNotice" parameterType="map">
+        insert into BS_NOTICES
+        (GUID, NOTICE_ID, NOTICE_TITLE, NOTICE_CONTENT, NOTICE_FILE, CREATE_USER_CODE, CREATE_USER_NAME, CREATE_DATE, SEND_STATUS, NOTICE_LEVEL)
+        values
+        (#{bsNotices.guid,jdbcType=VARCHAR},
+		#{bsNotices.noticeId,jdbcType=VARCHAR},
+		#{bsNotices.noticeTitle,jdbcType=VARCHAR},
+		#{bsNotices.noticeContent,jdbcType=VARCHAR},
+		#{bsNotices.noticeFile,jdbcType=VARCHAR},
+		#{bsNotices.createUserCode,jdbcType=VARCHAR},
+		#{bsNotices.createUserName,jdbcType=VARCHAR},
+		#{bsNotices.createDate,jdbcType=VARCHAR},
+		#{bsNotices.sendStatus,jdbcType=VARCHAR},
+		#{bsNotices.noticeLevel,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="saveNoticeTarget" parameterType="map">
+        insert into BS_NOTICE_TARGET
+        (GUID, NOTICE_ID, USER_CODE, RECEIVE_STATUS, CHECK_DATE)
+        values (
+        <!--oracle_bak: sys_guid(), -->
+        UUID(), #{noticeId,jdbcType=VARCHAR}, #{selectUser,jdbcType=VARCHAR},
+        #{receiveStatus,jdbcType=VARCHAR}, '')
+    </insert>
+
+    <select id="receiveAllNotices" parameterType="map" resultType="java.util.HashMap">
+        select t.user_code, t.NOTICE_ID, a.create_user_name, a.create_date, a.NOTICE_LEVEL
+        from BS_NOTICE_TARGET t
+        left join BS_NOTICES a
+        on a.notice_id = t.notice_id
+        where t.receive_status = '0' and USER_CODE = #{userCode,jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateNoticeTarget" parameterType="map">
+        update BS_NOTICE_TARGET
+        set
+        receive_status = #{receiveStatus,jdbcType=VARCHAR}
+        <if test="checkDate != null">
+            , CHECK_DATE = #{checkDate,jdbcType=VARCHAR}
+        </if>
+        where NOTICE_ID in (
+        <foreach collection="noticeId" item="item" index="index" separator=",">
+            #{item,jdbcType=VARCHAR}
+        </foreach>
+        )
+        and USER_CODE = #{selectUser,jdbcType=VARCHAR}
+    </update>
+
+    <select id="getUnCheckCount" parameterType="map" resultType="java.lang.String">
+        select count(1)
+        from BS_NOTICE_TARGET t
+        where receive_status &lt; '2' and USER_CODE = #{userCode,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getNoticeUsers" parameterType="map" resultType="java.lang.String">
+        select USER_CODE
+        from BS_NOTICE_TARGET
+        where NOTICE_ID = #{noticeId,jdbcType=VARCHAR}
+    </select>
+
+</mapper>

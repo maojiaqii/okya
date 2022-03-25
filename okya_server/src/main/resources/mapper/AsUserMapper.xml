@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.top.okya.dao.AsUserMapper">
+    <resultMap id="BaseResultMap" type="com.top.okya.pojo.AsUser">
+        <result column="GUID" jdbcType="VARCHAR" property="guid"/>
+        <result column="USER_CODE" jdbcType="VARCHAR" property="userCode"/>
+        <result column="USER_NAME" jdbcType="VARCHAR" property="userName"/>
+        <result column="PASS_WORD" jdbcType="VARCHAR" property="passWord"/>
+        <result column="USED" jdbcType="VARCHAR" property="used"/>
+        <result column="SET_YEAR" jdbcType="VARCHAR" property="setYear"/>
+    </resultMap>
+    <insert id="saveUser" parameterType="map">
+		insert into AS_USER
+		(GUID, USER_CODE, USER_NAME, PASS_WORD, USED, SET_YEAR)
+		values
+		(#{asUser.guid,jdbcType=VARCHAR},
+		#{asUser.userCode,jdbcType=VARCHAR},
+		#{asUser.userName,jdbcType=VARCHAR},
+		#{asUser.passWord,jdbcType=VARCHAR},
+		#{asUser.used,jdbcType=VARCHAR},
+		#{asUser.setYear,jdbcType=VARCHAR})
+	</insert>
+    <insert id="saveUserRole" parameterType="map">
+		insert into AS_USER_ROLE
+		(GUID, USER_CODE, ROLE_CODE, SET_YEAR)
+		values
+		(#{asUserRole.guid,jdbcType=VARCHAR},
+		#{asUserRole.userCode,jdbcType=VARCHAR},
+		#{asUserRole.roleCode,jdbcType=VARCHAR},
+		#{asUserRole.setYear,jdbcType=VARCHAR})
+	</insert>
+    <insert id="saveUserCompany" parameterType="map">
+		insert into AS_USER_COMPANY
+		(GUID, USER_CODE, CO_CODE, SET_YEAR)
+		values
+		(#{asUserCompany.guid,jdbcType=VARCHAR},
+		#{asUserCompany.userCode,jdbcType=VARCHAR},
+		#{asUserCompany.coCode,jdbcType=VARCHAR},
+		#{asUserCompany.setYear,jdbcType=VARCHAR})
+	</insert>
+    <update id="updateUser" parameterType="map">
+		update AS_USER
+		set
+		USER_NAME = #{asUser.userName,jdbcType=VARCHAR},
+		USED = #{asUser.used,jdbcType=VARCHAR}
+		where USER_CODE = #{asUser.userCode,jdbcType=VARCHAR}
+		and SET_YEAR = #{asUser.setYear,jdbcType=VARCHAR}
+	</update>
+    <update id="updateUserRole" parameterType="map">
+		update AS_USER_ROLE
+		set
+		ROLE_CODE = #{asUserRole.roleCode,jdbcType=VARCHAR}
+		where USER_CODE = #{asUserRole.userCode,jdbcType=VARCHAR}
+		and SET_YEAR = #{asUserRole.setYear,jdbcType=VARCHAR}
+	</update>
+    <update id="updateUserCompany" parameterType="map">
+		update AS_USER_COMPANY
+		set
+		CO_CODE = #{asUserCompany.coCode,jdbcType=VARCHAR}
+		where USER_CODE = #{asUserCompany.userCode,jdbcType=VARCHAR}
+		and SET_YEAR = #{asUserCompany.setYear,jdbcType=VARCHAR}
+	</update>
+    <delete id="deleteUser" parameterType="map">
+        delete from AS_USER
+        where USER_CODE in
+        <foreach collection="datas" open="(" close=")"
+                 separator="," item="item">
+            #{item.userCode}
+        </foreach>
+        and SET_YEAR =
+        #{setYear,jdbcType=VARCHAR}
+    </delete>
+    <delete id="deleteUserRole" parameterType="map">
+        delete from AS_USER_ROLE
+        where USER_CODE in
+        <foreach collection="datas" open="(" close=")"
+                 separator="," item="item">
+            #{item.userCode}
+        </foreach>
+        and SET_YEAR =
+        #{setYear,jdbcType=VARCHAR}
+    </delete>
+    <delete id="deleteUserCompany" parameterType="map">
+        delete from AS_USER_COMPANY
+        where USER_CODE in
+        <foreach collection="datas" open="(" close=")"
+                 separator="," item="item">
+            #{item.userCode}
+        </foreach>
+        and SET_YEAR =
+        #{setYear,jdbcType=VARCHAR}
+    </delete>
+	<update id="editPass" parameterType="map">
+		update AS_USER set PASS_WORD = #{pass,jdbcType=VARCHAR} where USER_CODE=#{id,jdbcType=VARCHAR}
+		and PASS_WORD = #{oldPass,jdbcType=VARCHAR}
+	</update>
+</mapper>

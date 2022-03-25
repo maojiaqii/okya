@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.top.okya.dao.ReportMapper">
+
+    <insert id="saveReport" parameterType="map">
+        insert into AS_REPORT ( ${col} ) values ( ${val} )
+    </insert>
+
+    <insert id="saveReportSearch" parameterType="map">
+        insert into AS_REPORT_SEARCH_PROPERTIES (GUID, REPORT_ID, SEARCH_FIELD, SEARCH_NAME, SEARCH_COMPO,
+        SEARCH_CONDITION, DATA_SOURCE)
+        select
+        A.* from (
+        <foreach collection="vals" item="item" index="index"
+                 separator="UNION ALL">
+            SELECT #{item.guid,jdbcType=VARCHAR},
+            #{item.reportId,jdbcType=VARCHAR},
+            #{item.SEARCH_FIELD,jdbcType=VARCHAR},
+            #{item.SEARCH_NAME,jdbcType=VARCHAR},
+            #{item.SEARCH_COMPO,jdbcType=VARCHAR},
+            #{item.SEARCH_CONDITION,jdbcType=VARCHAR},
+            #{item.DATA_SOURCE,jdbcType=VARCHAR}
+            FROM DUAL
+        </foreach>
+        )A
+    </insert>
+
+    <delete id="deleteReport" parameterType="map">
+        delete from AS_REPORT
+        where REPORT_ID in
+        <foreach collection="reportIds" open="(" close=")"
+                 separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="deleteReportSearch" parameterType="map">
+        delete from AS_REPORT_SEARCH_PROPERTIES
+        where REPORT_ID in
+        <foreach collection="reportIds" open="(" close=")"
+                 separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="getReportSearch" resultType="java.util.HashMap">
+        select SEARCH_FIELD, SEARCH_NAME, SEARCH_COMPO, SEARCH_CONDITION, DATA_SOURCE from AS_REPORT_SEARCH_PROPERTIES
+        <where>
+            <if test="reportId != null and reportId != ''">
+                and REPORT_ID = #{reportId,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="getReport" resultType="java.util.HashMap">
+        select * from AS_REPORT
+        <where>
+            <if test="reportId != null and reportId != ''">
+                and REPORT_ID = #{reportId,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+</mapper>

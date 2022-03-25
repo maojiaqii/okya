@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.top.okya.dao.AsPermissionMapper">
+    <resultMap id="BaseResultMap" type="com.top.okya.pojo.AsPermission">
+        <id column="GUID" jdbcType="VARCHAR" property="guid"/>
+        <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId"/>
+        <result column="COMPO" jdbcType="VARCHAR" property="compo"/>
+        <result column="COMPO_NAME" jdbcType="VARCHAR" property="compoName"/>
+        <result column="COMPO_TYPE" jdbcType="VARCHAR" property="compoType"/>
+        <result column="ICON" jdbcType="VARCHAR" property="icon"/>
+        <result column="SET_YEAR" jdbcType="VARCHAR" property="setYear"/>
+        <result column="DESCRI" jdbcType="VARCHAR" property="describe"/>
+        <result column="URL" jdbcType="VARCHAR" property="url"/>
+        <result column="COMPO_ID" jdbcType="VARCHAR" property="compoId"/>
+        <result column="ORDER_NUM" jdbcType="VARCHAR" property="orderNum"/>
+    </resultMap>
+    <resultMap id="ElMenuBeanMap" type="com.top.okya.util.elHelp.ElMenuBean">
+        <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId"/>
+        <result column="COMPO" jdbcType="VARCHAR" property="compo"/>
+        <result column="COMPO_NAME" jdbcType="VARCHAR" property="compoName"/>
+        <result column="COMPO_TYPE" jdbcType="VARCHAR" property="compoType"/>
+        <result column="ICON" jdbcType="VARCHAR" property="icon"/>
+        <result column="DESCRI" jdbcType="VARCHAR" property="describe"/>
+        <result column="URL" jdbcType="VARCHAR" property="url"/>
+        <result column="COMPO_ID" jdbcType="VARCHAR" property="compoId"/>
+        <result column="ORDER_NUM" jdbcType="VARCHAR" property="orderNum"/>
+        <result column="PARENT_NAME" jdbcType="VARCHAR" property="parentName"/>
+    </resultMap>
+    <resultMap id="ElTreeBeanMap" type="com.top.okya.util.elHelp.ElTreeBean">
+        <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId"/>
+        <result column="COMPO_NAME" jdbcType="VARCHAR" property="label"/>
+        <result column="COMPO_ID" jdbcType="VARCHAR" property="id"/>
+    </resultMap>
+    <select id="getCompos" parameterType="map" resultMap="ElMenuBeanMap">
+        select
+        *
+        from vt_permission
+        <where>1=1
+            <if test="compoName != null and compoName != ''">
+                and COMPO_NAME = #{compoName,jdbcType=VARCHAR}
+            </if>
+            and SET_YEAR = #{setYear,jdbcType=VARCHAR}
+        </where>
+        <if test="sortProp != null and sortProp != ''">
+            <!--oracle_bak: order by to_number(ORDER_NUM) asc, ${sortProp} ${sortOrder} -->
+            order by cast(ORDER_NUM as SIGNED) asc, ${sortProp} ${sortOrder}
+        </if>
+        <if test="sortProp == null or sortProp == ''">
+            <!--oracle_bak: order by to_number(ORDER_NUM) asc -->
+            order by cast(ORDER_NUM as SIGNED) asc
+        </if>
+    </select>
+    <select id="getParentCompos" parameterType="map" resultMap="ElTreeBeanMap">
+        select
+        PARENT_ID, COMPO_NAME, COMPO_ID
+        from AS_PERMISSION
+        <where>
+            SET_YEAR = #{setYear,jdbcType=VARCHAR}
+            and
+            COMPO_TYPE &lt;&gt; 'button'
+            <!--oracle_bak: order by to_number(ORDER_NUM) asc -->
+            order by cast(ORDER_NUM as SIGNED)
+        </where>
+    </select>
+    <select id="getAllCompos" parameterType="map" resultMap="ElTreeBeanMap">
+        select
+        PARENT_ID, COMPO_NAME, COMPO_ID
+        from AS_PERMISSION
+        <where>
+            SET_YEAR = #{setYear,jdbcType=VARCHAR}
+            <!--oracle_bak: order by to_number(ORDER_NUM) asc -->
+            order by cast(ORDER_NUM as SIGNED) asc
+        </where>
+    </select>
+    <insert id="saveCompo" parameterType="map">
+		insert into AS_PERMISSION
+		(GUID, PARENT_ID, COMPO, COMPO_NAME, COMPO_TYPE, ICON, SET_YEAR, DESCRI, URL, COMPO_ID, ORDER_NUM)
+		values
+		(#{asPermission.guid,jdbcType=VARCHAR},
+		#{asPermission.parentId,jdbcType=VARCHAR},
+		#{asPermission.compo,jdbcType=VARCHAR},
+		#{asPermission.compoName,jdbcType=VARCHAR},
+		#{asPermission.compoType,jdbcType=VARCHAR},
+		#{asPermission.icon,jdbcType=VARCHAR},
+		#{asPermission.setYear,jdbcType=VARCHAR},
+		#{asPermission.describe,jdbcType=VARCHAR},
+		#{asPermission.url,jdbcType=VARCHAR},
+		#{asPermission.compoId,jdbcType=VARCHAR},
+		#{asPermission.orderNum,jdbcType=VARCHAR})
+	</insert>
+    <update id="updateCompo" parameterType="map">
+		update AS_PERMISSION
+		set
+		PARENT_ID = #{asPermission.parentId,jdbcType=VARCHAR},
+		COMPO = #{asPermission.compo,jdbcType=VARCHAR},
+		COMPO_NAME = #{asPermission.compoName,jdbcType=VARCHAR},
+		COMPO_TYPE = #{asPermission.compoType,jdbcType=VARCHAR},
+		ICON = #{asPermission.icon,jdbcType=VARCHAR},
+		DESCRI = #{asPermission.describe,jdbcType=VARCHAR},
+		URL = #{asPermission.url,jdbcType=VARCHAR},
+		ORDER_NUM = #{asPermission.orderNum,jdbcType=VARCHAR}
+		where COMPO_ID = #{asPermission.compoId,jdbcType=VARCHAR}
+		and SET_YEAR = #{asPermission.setYear,jdbcType=VARCHAR}
+	</update>
+    <delete id="deleteCompo" parameterType="map">
+        delete from AS_PERMISSION
+        where (COMPO_ID in
+        <foreach collection="asPermissions" open="(" close=")"
+                 separator="," item="item">
+            #{item.compoId}
+        </foreach>
+        or
+        PARENT_ID in
+        <foreach collection="asPermissions" open="(" close=")"
+                 separator="," item="item">
+            #{item.compoId}
+        </foreach>)
+        and SET_YEAR =
+        #{setYear,jdbcType=VARCHAR}
+    </delete>
+</mapper>
